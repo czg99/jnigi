@@ -3,32 +3,32 @@
 // license that can be found in the LICENSE file.
 
 /*
-	JNIGI (Java Native Interface Go Interface)
+JNIGI (Java Native Interface Go Interface)
 
-	A package to access Java from Go code.
+A package to access Java from Go code.
 
-	All constructor and method call functions convert parameter arguments and return values.
+All constructor and method call functions convert parameter arguments and return values.
 
-	Arguments are converted from Go to Java if:
-	  - The type is Go built in type and there is an equivalent Java "primitive" type.
-	  - The type is a slice of such a Go built in type.
-	  - The type implements the ToJavaConverter interface
-	Return values are converted from Java to Go if:
-	  - The type is a Java "primitive" type.
-	  - The type is a Java array of a "primitive" type.
-	  - The type implements the ToGoConverter interface
+Arguments are converted from Go to Java if:
+  - The type is Go built in type and there is an equivalent Java "primitive" type.
+  - The type is a slice of such a Go built in type.
+  - The type implements the ToJavaConverter interface
+Return values are converted from Java to Go if:
+  - The type is a Java "primitive" type.
+  - The type is a Java array of a "primitive" type.
+  - The type implements the ToGoConverter interface
 
 
-	Go Builtin to/from Java "primitive":
+Go Builtin to/from Java "primitive":
 
-		bool			boolean
-		byte			byte
-		int16			short
-		uint16			char
-		int				int (also int32 -> int)
-		int64			long
-		float32			float
-		float64			double
+	bool			boolean
+	byte			byte
+	int16			short
+	uint16			char
+	int				int (also int32 -> int)
+	int64			long
+	float32			float
+	float64			double
 
 */
 package jnigi
@@ -430,13 +430,16 @@ func (j *Env) FromObjectArray(objRef *ObjectRef) []*ObjectRef {
 // returned go array. Normally this method does not need to be called because
 // New/Call/Field methods all call this internally.
 func (j *Env) ToGoArray(array jobject, aType Type) (interface{}, error) {
-	len := int(getArrayLength(j.jniEnv, jarray(array)))
-	// exception check?
+	len := -1
+	if array != 0 {
+		len = int(getArrayLength(j.jniEnv, jarray(array)))
+	}
 
 	switch aType.baseType() {
 	case Boolean:
-		v := make([]bool, len)
+		var v []bool
 		if len >= 0 {
+			v = make([]bool, len)
 			ptr := getBooleanArrayElements(j.jniEnv, jbooleanArray(array), nil)
 			if j.exceptionCheck() {
 				return nil, j.handleException()
@@ -449,8 +452,9 @@ func (j *Env) ToGoArray(array jobject, aType Type) (interface{}, error) {
 		}
 		return v, nil
 	case Byte:
-		v := make([]byte, len)
+		var v []byte
 		if len >= 0 {
+			v = make([]byte, len)
 			ptr := getByteArrayElements(j.jniEnv, jbyteArray(array), nil)
 			if j.exceptionCheck() {
 				return nil, j.handleException()
@@ -461,8 +465,9 @@ func (j *Env) ToGoArray(array jobject, aType Type) (interface{}, error) {
 		}
 		return v, nil
 	case Short:
-		v := make([]int16, len)
+		var v []int16
 		if len >= 0 {
+			v = make([]int16, len)
 			ptr := getShortArrayElements(j.jniEnv, jshortArray(array), nil)
 			if j.exceptionCheck() {
 				return nil, j.handleException()
@@ -473,8 +478,9 @@ func (j *Env) ToGoArray(array jobject, aType Type) (interface{}, error) {
 		}
 		return v, nil
 	case Char:
-		v := make([]uint16, len)
+		var v []uint16
 		if len >= 0 {
+			v = make([]uint16, len)
 			ptr := getCharArrayElements(j.jniEnv, jcharArray(array), nil)
 			if j.exceptionCheck() {
 				return nil, j.handleException()
@@ -485,8 +491,9 @@ func (j *Env) ToGoArray(array jobject, aType Type) (interface{}, error) {
 		}
 		return v, nil
 	case Int:
-		v := make([]int32, len)
+		var v []int32
 		if len >= 0 {
+			v = make([]int32, len)
 			ptr := getIntArrayElements(j.jniEnv, jintArray(array), nil)
 			if j.exceptionCheck() {
 				return nil, j.handleException()
@@ -497,8 +504,9 @@ func (j *Env) ToGoArray(array jobject, aType Type) (interface{}, error) {
 		}
 		return v, nil
 	case Long:
-		v := make([]int64, len)
+		var v []int64
 		if len >= 0 {
+			v = make([]int64, len)
 			ptr := getLongArrayElements(j.jniEnv, jlongArray(array), nil)
 			if j.exceptionCheck() {
 				return nil, j.handleException()
@@ -509,8 +517,9 @@ func (j *Env) ToGoArray(array jobject, aType Type) (interface{}, error) {
 		}
 		return v, nil
 	case Float:
-		v := make([]float32, len)
+		var v []float32
 		if len >= 0 {
+			v = make([]float32, len)
 			ptr := getFloatArrayElements(j.jniEnv, jfloatArray(array), nil)
 			if j.exceptionCheck() {
 				return nil, j.handleException()
@@ -521,8 +530,9 @@ func (j *Env) ToGoArray(array jobject, aType Type) (interface{}, error) {
 		}
 		return v, nil
 	case Double:
-		v := make([]float64, len)
+		var v []float64
 		if len >= 0 {
+			v = make([]float64, len)
 			ptr := getDoubleArrayElements(j.jniEnv, jdoubleArray(array), nil)
 			if j.exceptionCheck() {
 				return nil, j.handleException()
