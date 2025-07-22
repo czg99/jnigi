@@ -13,11 +13,11 @@ Arguments are converted from Go to Java if:
   - The type is Go built in type and there is an equivalent Java "primitive" type.
   - The type is a slice of such a Go built in type.
   - The type implements the ToJavaConverter interface
+
 Return values are converted from Java to Go if:
   - The type is a Java "primitive" type.
   - The type is a Java array of a "primitive" type.
   - The type implements the ToGoConverter interface
-
 
 Go Builtin to/from Java "primitive":
 
@@ -29,7 +29,6 @@ Go Builtin to/from Java "primitive":
 	int64			long
 	float32			float
 	float64			double
-
 */
 package jnigi
 
@@ -185,9 +184,10 @@ func CreateJVM(jvmInitArgs *JVMInitArgs) (*JVM, *Env, error) {
 // Android app--i.e. Go code built as a shared library.
 //
 // An existing JVM may be obtained through a JNI call made by the JVM after System.loadLibrary:
-//   JNIEXPORT void JNICALL Java_foo_bar_Baz_00024_funcName(JNIEnv *env, jobject thiz) {
-//     // Pass env, thiz and the result of (*env)->GetJavaVM() into Go, then UseJVM()
-//   }
+//
+//	JNIEXPORT void JNICALL Java_foo_bar_Baz_00024_funcName(JNIEnv *env, jobject thiz) {
+//	  // Pass env, thiz and the result of (*env)->GetJavaVM() into Go, then UseJVM()
+//	}
 //
 // If 'thiz' is specified, its class loader will be used to find non-system classes.
 // This should pick up custom classes, as well as libraries from dependencies { } in build.gradle.
@@ -661,6 +661,9 @@ func (b *ByteArray) CopyBytes(env *Env) []byte {
 func (j *Env) ToJavaArray(src interface{}) (jobject, error) {
 	switch v := src.(type) {
 	case []bool:
+		if v == nil {
+			return 0, nil
+		}
 		ba := newBooleanArray(j.jniEnv, jsize(len(v)))
 		if ba == 0 {
 			return 0, j.handleException()
@@ -689,6 +692,9 @@ func (j *Env) ToJavaArray(src interface{}) (jobject, error) {
 		}
 		return jobject(ba), nil
 	case []byte:
+		if v == nil {
+			return 0, nil
+		}
 		ba := newByteArray(j.jniEnv, jsize(len(v)))
 		if ba == 0 {
 			return 0, j.handleException()
@@ -711,6 +717,9 @@ func (j *Env) ToJavaArray(src interface{}) (jobject, error) {
 		}
 		return jobject(ba), nil
 	case []int16:
+		if v == nil {
+			return 0, nil
+		}
 		array := newShortArray(j.jniEnv, jsize(len(v)))
 		if array == 0 {
 			return 0, j.handleException()
@@ -733,6 +742,9 @@ func (j *Env) ToJavaArray(src interface{}) (jobject, error) {
 		}
 		return jobject(array), nil
 	case []uint16:
+		if v == nil {
+			return 0, nil
+		}
 		array := newCharArray(j.jniEnv, jsize(len(v)))
 		if array == 0 {
 			return 0, j.handleException()
@@ -755,6 +767,9 @@ func (j *Env) ToJavaArray(src interface{}) (jobject, error) {
 		}
 		return jobject(array), nil
 	case []int32:
+		if v == nil {
+			return 0, nil
+		}
 		array := newIntArray(j.jniEnv, jsize(len(v)))
 		if array == 0 {
 			return 0, j.handleException()
@@ -777,6 +792,9 @@ func (j *Env) ToJavaArray(src interface{}) (jobject, error) {
 		}
 		return jobject(array), nil
 	case []int:
+		if v == nil {
+			return 0, nil
+		}
 		array := newIntArray(j.jniEnv, jsize(len(v)))
 		if array == 0 {
 			return 0, j.handleException()
@@ -806,6 +824,9 @@ func (j *Env) ToJavaArray(src interface{}) (jobject, error) {
 		}
 		return jobject(array), nil
 	case []int64:
+		if v == nil {
+			return 0, nil
+		}
 		array := newLongArray(j.jniEnv, jsize(len(v)))
 		if array == 0 {
 			return 0, j.handleException()
@@ -828,6 +849,9 @@ func (j *Env) ToJavaArray(src interface{}) (jobject, error) {
 		}
 		return jobject(array), nil
 	case []float32:
+		if v == nil {
+			return 0, nil
+		}
 		array := newFloatArray(j.jniEnv, jsize(len(v)))
 		if array == 0 {
 			return 0, j.handleException()
@@ -850,6 +874,9 @@ func (j *Env) ToJavaArray(src interface{}) (jobject, error) {
 		}
 		return jobject(array), nil
 	case []float64:
+		if v == nil {
+			return 0, nil
+		}
 		array := newDoubleArray(j.jniEnv, jsize(len(v)))
 		if array == 0 {
 			return 0, j.handleException()
