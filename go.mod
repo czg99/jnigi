@@ -1,4 +1,4 @@
-module github.com/timob/jnigi
+module github.com/czg99/jnigi
 
 go 1.12
 
